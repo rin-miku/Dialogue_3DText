@@ -112,6 +112,11 @@ SubShader {
 
 	Pass {
 		CGPROGRAM
+		#include "UnityCG.cginc"
+		#include "UnityUI.cginc"
+		#include "TMPro_Properties.cginc"
+		#include "TMPro.cginc"
+
 		#pragma target 3.0
 		#pragma vertex VertShader
 		#pragma fragment PixShader
@@ -122,11 +127,6 @@ SubShader {
 		#pragma multi_compile __ UNITY_UI_CLIP_RECT
 		#pragma multi_compile __ UNITY_UI_ALPHACLIP
 
-		#include "UnityCG.cginc"
-		#include "UnityUI.cginc"
-		#include "TMPro_Properties.cginc"
-		#include "TMPro.cginc"
-
 		struct vertex_t {
 			UNITY_VERTEX_INPUT_INSTANCE_ID
 			float4	position		: POSITION;
@@ -135,7 +135,6 @@ SubShader {
 			float2	texcoord0		: TEXCOORD0;
 			float2	texcoord1		: TEXCOORD1;
 		};
-
 
 		struct pixel_t {
 			UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -184,7 +183,7 @@ SubShader {
 			float weight = lerp(_WeightNormal, _WeightBold, bold) / 4.0;
 			weight = (weight + _FaceDilate) * _ScaleRatioA * 0.5;
 
-			float bias =(.5 - weight) + (.5 / scale);
+			float bias = (.5 - weight) + (.5 / scale);
 
 			float alphaClip = (1.0 - _OutlineWidth * _ScaleRatioA - _OutlineSoftness * _ScaleRatioA);
 
@@ -216,13 +215,13 @@ SubShader {
 			float2 faceUV = TRANSFORM_TEX(textureUV, _FaceTex);
 			float2 outlineUV = TRANSFORM_TEX(textureUV, _OutlineTex);
 
-
 			output.position = vPosition;
-			output.color = input.color;
+			output.color = input.color;		
 			output.atlas =	input.texcoord0;
-			output.param =	float4(alphaClip, scale, bias, weight);
+			output.param =	float4(.05, scale, bias, weight);	// alphaClip 
 			output.mask = half4(vert.xy * 2 - clampedRect.xy - clampedRect.zw, 0.25 / (0.25 * half2(_MaskSoftnessX, _MaskSoftnessY) + pixelSize.xy));
 			output.viewDir =	mul((float3x3)_EnvMatrix, _WorldSpaceCameraPos.xyz - mul(unity_ObjectToWorld, vert).xyz);
+
 			#if (UNDERLAY_ON || UNDERLAY_INNER)
 			output.texcoord2 = float4(input.texcoord0 + bOffset, bScale, bBias);
 			output.underlayColor =	underlayColor;
@@ -232,8 +231,7 @@ SubShader {
 			return output;
 		}
 
-
-		fixed4 PixShader(pixel_t input) : SV_Target
+		fixed4 PixShader(pixel_t input, fixed facing : VFACE) : SV_Target
 		{
 			UNITY_SETUP_INSTANCE_ID(input);
 
@@ -254,7 +252,7 @@ SubShader {
 			half4 faceColor = _FaceColor;
 			half4 outlineColor = _OutlineColor;
 
-			faceColor.rgb *= input.color.rgb;
+			faceColor.rgb *= facing > 0 ? input.color : fixed4(1.0, 1.0, 1.0, input.color.a);
 
 			faceColor *= tex2D(_FaceTex, input.textures.xy + float2(_FaceUVSpeedX, _FaceUVSpeedY) * _Time.y);
 			outlineColor *= tex2D(_OutlineTex, input.textures.zw + float2(_OutlineUVSpeedX, _OutlineUVSpeedY) * _Time.y);
