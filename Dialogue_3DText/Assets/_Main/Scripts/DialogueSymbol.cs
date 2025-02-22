@@ -19,11 +19,6 @@ public class DialogueSymbol : MonoBehaviour
         symbolCollider = symbolTransform.GetComponent<BoxCollider>();
     }
 
-    private void Start()
-    {
-
-    }
-
     public void SetSymbol(char c, Dialogue3DTheme theme)
     {
         symbolText.text = c.ToString();

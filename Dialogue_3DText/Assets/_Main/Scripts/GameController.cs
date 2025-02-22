@@ -1,34 +1,45 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    public Dialogue mitaDialogue;
-    public Dialogue playerDialogue;
+    public Dialogue3DText mitaDialogue;
+    public Dialogue3DText playerDialogue;
     public float interval;
 
-    private void Start()
+    private void Update()
     {
-        StartCoroutine(DialogueTest());
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            StartCoroutine(DialogueTest());
+        }
     }
 
     private IEnumerator DialogueTest()
     {
-        playerDialogue.PlayDialogue("过去都是假的，回忆是一条没有尽头的路");
+        mitaDialogue.SetDialogueInfo("哦，你已经醒了吗？");
         yield return new WaitForSeconds(interval);
-        mitaDialogue.PlayDialogue("我年纪还轻，阅历不深，但我发现");
+        playerDialogue.SetDialogueInfo("你怎么突然就到这里来了？");
         yield return new WaitForSeconds(interval);
-        playerDialogue.PlayDialogue("美是完整无缺的，丑是残缺不全的。");
+        playerDialogue.SetDialogueInfo("你刚刚还在我身边");
         yield return new WaitForSeconds(interval);
-        mitaDialogue.PlayDialogue("幸福的家庭都是相似的，不幸的家庭各有各的不幸。");
+        mitaDialogue.SetDialogueInfo("不");
         yield return new WaitForSeconds(interval);
-        playerDialogue.PlayDialogue("一个人可以被毁灭，但不能被打败。");
+        mitaDialogue.SetDialogueInfo("你刚才在镜子前卡住了");
         yield return new WaitForSeconds(interval);
-        mitaDialogue.PlayDialogue("一个单身汉，拥有可观的财富，必定想找个妻子");
+        mitaDialogue.SetDialogueInfo("我就先走开了");
         yield return new WaitForSeconds(interval);
-        playerDialogue.PlayDialogue("都云作者痴，谁解其中味？");
+        playerDialogue.SetDialogueInfo("那房间是怎么回事？");
+        yield return new WaitForSeconds(interval);
+        mitaDialogue.SetDialogueInfo("我修改了一下布局");
+        yield return new WaitForSeconds(interval);
+        mitaDialogue.SetDialogueInfo("这样对你来说方便些");
+        yield return new WaitForSeconds(interval);
+        playerDialogue.SetDialogueInfo("你没必要这样做的");
+        yield return new WaitForSeconds(interval);
+        playerDialogue.SetDialogueInfo("我其实都已经开始习惯了");
+        yield return new WaitForSeconds(interval);
+        mitaDialogue.SetDialogueInfo("我觉得这样会让你更舒服些。");
         yield return new WaitForSeconds(interval);
     }
 }

@@ -1,17 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float walkSpeed = 5.0f;          // 步行速度
-    public float runSpeed = 8.0f;           // 奔跑速度
-    public float sprintSpeed = 12.0f;       // 冲刺速度
-    public float jumpForce = 5.0f;          // 跳跃力度
-    public float gravity = -20.0f;          // 重力
-    public float mouseSensitivity = 2.0f;   // 鼠标灵敏度
-    public float lookSmoothness = 0.1f;     // 视角平滑度
-    public Vector2 lookXLimit;        // 上下视角限制
+    public float walkSpeed = 5.0f;        
+    public float runSpeed = 8.0f;         
+    public float sprintSpeed = 12.0f;     
+    public float jumpForce = 5.0f;        
+    public float gravity = -20.0f;        
+    public float mouseSensitivity = 2.0f; 
+    public float lookSmoothness = 0.1f;   
+    public Vector2 lookXLimit;            
 
     private float currentSpeed;
     private float currentGravity;
@@ -25,36 +23,33 @@ public class PlayerController : MonoBehaviour
     private float groundCheckRadius = 0.3f;
     private LayerMask groundMask;
 
-    public Transform groundCheck;           // 地面检测点
-    public Transform playerCamera;          // 玩家相机
+    public Transform groundCheck;          
+    public Transform playerCamera;          
 
     private CharacterController controller;
 
-    void Start()
+    private void Start()
     {
         controller = GetComponent<CharacterController>();
         currentSpeed = walkSpeed;
-        //Cursor.lockState = CursorLockMode.Locked; // 锁定鼠标指针
-        groundMask = LayerMask.GetMask("Ground"); // 假设地面层名为 "Ground"
+        groundMask = LayerMask.GetMask("Ground");
     }
 
-    void Update()
+    private void Update()
     {
-        // 检测是否在地面上
+        
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
         if (isGrounded && velocity.y < 0)
         {
-            velocity.y = -2f; // 轻微下落，防止下落速度过快
+            velocity.y = -2f;
         }
 
-        // 玩家移动
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
         Vector3 move = transform.right * x + transform.forward * z;
 
-        // 切换速度
         if (Input.GetKey(KeyCode.LeftShift))
         {
             currentSpeed = sprintSpeed;
@@ -74,17 +69,14 @@ public class PlayerController : MonoBehaviour
 
         controller.Move(move * currentSpeed * Time.deltaTime);
 
-        // 跳跃
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             velocity.y = Mathf.Sqrt(-2f * jumpForce * gravity);
         }
 
-        // 应用重力
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
 
-        // 鼠标控制视角
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
