@@ -1,8 +1,5 @@
-using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 
 public enum Dialogue3DTheme
@@ -38,32 +35,6 @@ public class Dialogue3DText : MonoBehaviour
         globalDialogueRoot = GameObject.Find("GlobalDialogueRoot").transform;
     }
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            SetDialogueInfo("雨是很少见？！雨是很少见？！", Dialogue3DTheme.Player);
-        }
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-
-        }
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            
-        }
-
-        if (lookOnPlayer)
-        {
-            // 计算从 UI 到玩家的方向向量
-            Transform player = GameObject.Find("Player").transform;
-            Vector3 direction = (player.position - transform.position).normalized;
-            // 只在 Y 轴上旋转
-            Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Euler(transform.eulerAngles.x, lookRotation.eulerAngles.y, transform.eulerAngles.z);
-        }
-    }
-
     public void SetDialogueInfo(string text, Dialogue3DTheme theme)
     {
         int index = 0;
@@ -74,7 +45,7 @@ public class Dialogue3DText : MonoBehaviour
         {
             char c = text[index];
 
-            DialogueSymbol symbol = PrefabUtility.InstantiatePrefab(symbolPrefab, transform).GetComponent<DialogueSymbol>();
+            DialogueSymbol symbol = Instantiate(symbolPrefab, transform).GetComponent<DialogueSymbol>();
             symbolObjects.Add(symbol);
             symbol.SetSymbol(c, theme);
             symbol.transform.localPosition = new Vector3(index * sizeWidth - symbolCount * sizeWidth * 0.5f, 0f, 0f);
@@ -100,9 +71,9 @@ public class Dialogue3DText : MonoBehaviour
 
     private IEnumerator JumpAnimation()
     {
-        transform.parent = globalDialogueRoot.transform;
         foreach (DialogueSymbol symbol in symbolObjects)
         {
+            symbol.transform.parent = globalDialogueRoot.transform;
             symbol.JumpAnimation();
             yield return new WaitForSeconds(jumpInterval);
         }
@@ -121,6 +92,11 @@ public class Dialogue3DText : MonoBehaviour
         }
 
         yield return new WaitForSeconds(waitDestroyTime);
+
+        foreach(DialogueSymbol symbol in symbolObjects)
+        {
+            Destroy(symbol.gameObject);
+        }
 
         Destroy(gameObject);
     }

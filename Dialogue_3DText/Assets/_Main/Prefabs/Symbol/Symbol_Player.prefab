@@ -102,7 +102,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u96E8"
+  m_text: "\u8DEF"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3959c3b4cc92af04fad4d86a6945902d, type: 2}
   m_sharedMaterial: {fileID: -4537308579548482719, guid: 3959c3b4cc92af04fad4d86a6945902d, type: 2}
